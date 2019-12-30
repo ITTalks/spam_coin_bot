@@ -1,5 +1,8 @@
 from user import User
 import asyncio
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 token = "token"
 
@@ -11,7 +14,7 @@ async def main():
     # await user.solve_forever()
     # await user.mine_forever()
 
-    await user.mine_and_solve_forever()
+    await user.mine_forever()
 
 
 if __name__ == '__main__':
