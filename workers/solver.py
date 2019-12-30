@@ -1,4 +1,5 @@
 from .base_api import ApiBase
+import logging
 
 
 class Solver(ApiBase):
@@ -12,9 +13,10 @@ class Solver(ApiBase):
         params = {"result": result}
 
         resp = await self.api_request(method="solve.send", params=params)
-        print(resp)
+        logging.info(f"Solved! Solve status - {resp}")
         return resp
 
     async def solve_forever(self):
+        logging.info("Starting solving...")
         while True:
             await self.solve_one()

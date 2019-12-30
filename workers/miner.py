@@ -1,6 +1,7 @@
 from .base_api import ApiBase
 import hashlib
 import websockets
+import logging
 
 
 class Miner(ApiBase):
@@ -22,10 +23,10 @@ class Miner(ApiBase):
 
             if sha.hexdigest().startswith("000000"):
                 r = await self.api_request("mining.send", params={"nonce": nonce})
-                print(sha.hexdigest())
-                print(r)
+                logging.info(f"Block found! Solve block status - {r}")
                 return r
 
     async def mine_forever(self):
         while True:
+            logging.info("Starting mining...")
             await self.solve_block()
