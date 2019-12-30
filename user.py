@@ -12,9 +12,9 @@ class User(ApiBase):
         solver = Solver(token=self.token)
         await solver.solve_forever()
 
-    async def mine_forever(self, start=0, end=2**64):
+    async def mine_forever(self):
         miner = Miner(token=self.token)
-        await miner.mine_forever(start, end)
+        await miner.mine_forever()
 
     async def send_coin(self, user_id: int, amount: int):
         params = {
