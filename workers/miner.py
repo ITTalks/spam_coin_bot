@@ -14,10 +14,10 @@ class Miner(ApiBase):
             hash_ = await websocket.recv()
             return hash_
 
-    async def solve_block(self):
+    async def solve_block(self, start):
         hash_ = await self.get_hash()
 
-        for nonce in range(0, 2 ** 64):
+        for nonce in range(start, 2 ** 64):
             to_hash = (hash_ + str(nonce)).encode()
             sha = hashlib.sha256(bytes(to_hash))
 
@@ -26,7 +26,11 @@ class Miner(ApiBase):
                 logging.info(f"Block found! Solve block status - {r}")
                 return r
 
-    async def mine_forever(self):
+    async def mine_forever(self, processes_value):
+        logging.info(f"Starting mining in {processes_value} processes")
         while True:
-            logging.info("Starting mining...")
-            await self.solve_block()
+            step = (2 ** 64) // processes_value
+
+            for proc in range(1, processes_value):
+                start = step * proc
+                await self.solve_block(start)
