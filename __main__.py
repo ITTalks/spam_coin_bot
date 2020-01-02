@@ -1,6 +1,8 @@
 import threading
 import os
 
+
+token = "token"
 threads_value = 10
 
 
@@ -9,5 +11,5 @@ for i in range(threads_value):
     end = ((2 ** 64) // threads_value) * (i + 1)
 
     threading.Thread(
-        target=os.system, args=(f"python mine.py {start} {end} {i}",)
+        target=os.system, args=(f"python mine.py {start} {end} {i} {token}",)
     ).start()
