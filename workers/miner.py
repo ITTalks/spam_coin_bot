@@ -1,5 +1,3 @@
-import random
-
 from .base_api import ApiBase
 import hashlib
 import websockets
@@ -29,7 +27,7 @@ class Miner(ApiBase):
             i = 0
             for nonce in reversed(range(start, end)):
                 to_hash = (hash_first + str(nonce)).encode()
-                sha = hashlib.sha256(bytes(to_hash))
+                sha = hashlib.sha256(to_hash)
 
                 if i == self.check_dict[zero_value_start]:
                     hash_info = await websocket.recv()
@@ -47,7 +45,9 @@ class Miner(ApiBase):
 
                 if sha.hexdigest().startswith("0" * int(zero_value_start)):
                     r = await self.api_request("mining.send", params={"nonce": nonce})
-                    logging.info(f"{thread_name} Block found! Solve block status - {r}")
+                    logging.info(
+                        f"{thread_name}: Block found! Solve block status - {r}"
+                    )
                     return r
                 i += 1
 
@@ -56,20 +56,6 @@ class Miner(ApiBase):
         while True:
             try:
                 await self.solve_block(start, end, thread_name)
-            except KeyboardInterrupt:
-                exit(0)
-            except Exception as e:
-                logging.error(f"thread-{thread_name}: {e}")
-                continue
-
-    async def mine_forever_random(self, start, end, thread_name):
-        logging.info(f"thread-{thread_name}: Starting random mining...")
-        while True:
-            try:
-                nonce = random.randint(start, end)
-                r = await self.api_request("mining.send", params={"nonce": nonce})
-                if r == "ok":
-                    logging.info(f"{thread_name}: Block found! Solve block status - {r}")
             except KeyboardInterrupt:
                 exit(0)
             except Exception as e:
