@@ -1,23 +1,11 @@
-from user import User
-import asyncio
-import logging
-from multiprocessing import Process
+import threading
+import os
+
+threads_value = 10
 
 
-logging.basicConfig(level=logging.INFO)
+for i in range(threads_value):
+    start = ((2 ** 64) // threads_value) * i
+    end = ((2 ** 64) // threads_value) * (i + 1)
 
-token = "token"
-
-
-async def main():
-
-    user = User(token=token)
-
-    # майним или решаем, или и то и то
-    # await user.solve_forever()
-    await user.mine_forever()
-
-
-if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    threading.Thread(target=os.system, args=(f"python mine.py {start} {end} {i}",)).start()

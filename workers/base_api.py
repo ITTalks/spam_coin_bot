@@ -5,7 +5,7 @@ class ApiBase:
     def __init__(self, token: str):
         self.session = aiohttp.ClientSession()
         self.token = token
-        self.url = "https://app.rolang.site/api/{}/{}"
+        self.url = "https://coin.rcx.at/api/{}/{}"
 
     async def api_request(self, method, params=None):
         if params is None:
