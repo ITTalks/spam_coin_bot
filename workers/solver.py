@@ -3,7 +3,7 @@ import logging
 
 
 class Solver(ApiBase):
-    def __init__(self, token):
+    def __init__(self, token: str):
         super().__init__(token)
 
     async def solve_one(self):

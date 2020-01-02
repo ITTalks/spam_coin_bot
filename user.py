@@ -9,11 +9,11 @@ class User(ApiBase):
         super().__init__(token)
 
     async def solve_forever(self):
-        solver = Solver(token=self.token)
+        solver: Solver = Solver(token=self.token)
         await solver.solve_forever()
 
-    async def mine_forever(self, start, end, thread_name):
-        miner = Miner(token=self.token)
+    async def mine_forever(self, start: int, end: int, thread_name: str):
+        miner: Miner = Miner(token=self.token)
         await miner.mine_forever(start, end, thread_name)
 
     async def send_coin(self, user_id: int, amount: int):

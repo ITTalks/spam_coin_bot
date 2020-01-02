@@ -1,3 +1,5 @@
+import _hashlib
+
 from .base_api import ApiBase
 import hashlib
 import websockets
@@ -19,18 +21,18 @@ class Miner(ApiBase):
             "10": 2000000,
         }
 
-    async def solve_block(self, start, end, thread_name):
+    async def solve_block(self, start: int, end: int, thread_name: str):
         async with websockets.connect("wss://mining.rcx.at/") as websocket:
-            hash_info = await websocket.recv()
+            hash_info: str = await websocket.recv()
             zero_value_start, hash_first = hash_info.split(":")
 
             i = 0
             for nonce in reversed(range(start, end)):
-                to_hash = (hash_first + str(nonce)).encode()
-                sha = hashlib.sha256(to_hash)
+                to_hash: bytes = (hash_first + str(nonce)).encode()
+                sha: _hashlib.HASH = hashlib.sha256(to_hash)
 
                 if i == self.check_dict[zero_value_start]:
-                    hash_info = await websocket.recv()
+                    hash_info: str = await websocket.recv()
                     zero_value, hash_ = hash_info.split(":")
                     if hash_ != hash_first:
                         logging.info(f" thread-{thread_name}: Changed hash to {hash_}")
@@ -51,7 +53,7 @@ class Miner(ApiBase):
                     return r
                 i += 1
 
-    async def mine_forever(self, start, end, thread_name):
+    async def mine_forever(self, start: int, end: int, thread_name: str):
         logging.info(f"thread-{thread_name}: Starting mining...")
         while True:
             try:
