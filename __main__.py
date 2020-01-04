@@ -1,15 +1,20 @@
-import threading
-import os
-
+import subprocess
+import time
 
 token = "token"
-threads_value = 10
+process_value = 10
 
 
-for i in range(threads_value):
-    start = ((2 ** 64) // threads_value) * i
-    end = ((2 ** 64) // threads_value) * (i + 1)
+for i in range(process_value):
+    # thread_name = i
 
-    threading.Thread(
-        target=os.system, args=(f"python mine.py {start} {end} {i} {token}",)
-    ).start()
+    start = ((2 ** 64) // process_value) * i
+    end = ((2 ** 64) // process_value) * (i + 1)
+
+    if i == process_value - 1:
+        subprocess.Popen(f"python mine.py {start} {end} {i} {token}").wait()
+
+    else:
+        subprocess.Popen(f"python mine.py {start} {end} {i} {token}")
+
+    time.sleep(0.2)
