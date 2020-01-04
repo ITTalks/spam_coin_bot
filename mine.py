@@ -6,7 +6,7 @@ import logging
 logging.basicConfig(level=logging.INFO)
 
 
-start, end, thread_name, token = (
+start, end, process_name, token = (
     int(sys.argv[1]),
     int(sys.argv[2]),
     sys.argv[3],
@@ -17,7 +17,7 @@ start, end, thread_name, token = (
 async def main():
     user: User = User(token=token)
 
-    await user.mine_forever(start=start, end=end, thread_name=thread_name)
+    await user.mine_forever(start=start, end=end, process_name=process_name)
 
 
 if __name__ == "__main__":

@@ -21,7 +21,7 @@ class Miner(ApiBase):
             "10": 2000000,
         }
 
-    async def solve_block(self, start: int, end: int, thread_name: str):
+    async def solve_block(self, start: int, end: int, process_name: str):
         async with websockets.connect("wss://mining.rcx.at/") as websocket:
             hash_info: str = await websocket.recv()
             zero_value_start, hash_first = hash_info.split(":")
@@ -35,12 +35,12 @@ class Miner(ApiBase):
                     hash_info: str = await websocket.recv()
                     zero_value, hash_ = hash_info.split(":")
                     if hash_ != hash_first:
-                        logging.info(f" thread-{thread_name}: Changed hash to {hash_}")
+                        logging.info(f"process-{process_name}: Changed hash to {hash_}")
                         nonce = start
                         hash_first = hash_
                     if zero_value != zero_value_start:
                         logging.info(
-                            f" thread-{thread_name}: Changed zero_value to {zero_value}"
+                            f"process-{process_name}: Changed zero_value to {zero_value}"
                         )
                         zero_value_start = zero_value
                     i = 0
@@ -48,18 +48,18 @@ class Miner(ApiBase):
                 if sha.hexdigest().startswith("0" * int(zero_value_start)):
                     r = await self.api_request("mining.send", params={"nonce": nonce})
                     logging.info(
-                        f"{thread_name}: Block found! Solve block status - {r}"
+                        f"process-{process_name}: Block found! Solve block status - {r}"
                     )
                     return r
                 i += 1
 
-    async def mine_forever(self, start: int, end: int, thread_name: str):
-        logging.info(f"thread-{thread_name}: Starting mining...")
+    async def mine_forever(self, start: int, end: int, process_name: str):
+        logging.info(f"process-{process_name}: Starting mining...")
         while True:
             try:
-                await self.solve_block(start, end, thread_name)
+                await self.solve_block(start, end, process_name)
             except KeyboardInterrupt:
                 exit(0)
             except Exception as e:
-                logging.error(f"thread-{thread_name}: {e}")
+                logging.error(f"process-{process_name}: {e}")
                 continue
