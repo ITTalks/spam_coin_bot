@@ -1,20 +1,29 @@
-import subprocess
-import time
+import asyncio
+
 
 token = "token"
 process_value = 10
 
 
-for i in range(process_value):
-    # thread_name = i
+async def start():
+    for i in range(process_value):
 
-    start = ((2 ** 64) // process_value) * i
-    end = ((2 ** 64) // process_value) * (i + 1)
+        start_ = ((2 ** 64) // process_value) * i
+        end = ((2 ** 64) // process_value) * (i + 1)
 
-    if i == process_value - 1:
-        subprocess.Popen(f"python mine.py {start} {end} {i} {token}").wait()
+        if i == process_value - 1:
+            p = await asyncio.subprocess.create_subprocess_shell(
+                f"python mine.py {start_} {end} {i} {token}"
+            )
+            await p.wait()
 
-    else:
-        subprocess.Popen(f"python mine.py {start} {end} {i} {token}")
+        else:
+            await asyncio.subprocess.create_subprocess_shell(
+                f"python mine.py {start_} {end} {i} {token}"
+            )
 
-    time.sleep(0.2)
+
+if __name__ == "__main__":
+    loop = asyncio.ProactorEventLoop()
+    asyncio.set_event_loop(loop)
+    loop.run_until_complete(start())
